@@ -859,7 +859,7 @@ auto disk_io_write(void* instance, uint16_t program_counter,
 
 auto cmd_handle_insert(DiskPeripheral_t* dp, const void* data, size_t size)
     -> PeripheralStatus_t {
-  if (dp == nullptr || data == nullptr || size < sizeof(DiskInsertCmd_t)) {
+  if (dp == nullptr || data == nullptr || size != sizeof(DiskInsertCmd_t)) {
     return peripheral_error;
   }
   const auto* c = static_cast<const DiskInsertCmd_t*>(data);
@@ -875,7 +875,7 @@ auto cmd_handle_insert(DiskPeripheral_t* dp, const void* data, size_t size)
 
 auto cmd_handle_eject(DiskPeripheral_t* dp, const void* data, size_t size)
     -> PeripheralStatus_t {
-  if (dp == nullptr || data == nullptr || size < sizeof(DiskEjectCmd_t)) {
+  if (dp == nullptr || data == nullptr || size != sizeof(DiskEjectCmd_t)) {
     return peripheral_error;
   }
   const auto* c = static_cast<const DiskEjectCmd_t*>(data);
@@ -888,7 +888,7 @@ auto cmd_handle_eject(DiskPeripheral_t* dp, const void* data, size_t size)
 
 auto cmd_handle_set_protect(DiskPeripheral_t* dp, const void* data, size_t size)
     -> PeripheralStatus_t {
-  if (dp == nullptr || data == nullptr || size < sizeof(DiskSetProtectCmd_t)) {
+  if (dp == nullptr || data == nullptr || size != sizeof(DiskSetProtectCmd_t)) {
     return peripheral_error;
   }
   const auto* c = static_cast<const DiskSetProtectCmd_t*>(data);
@@ -903,7 +903,7 @@ auto cmd_handle_set_protect(DiskPeripheral_t* dp, const void* data, size_t size)
 
 auto cmd_handle_set_speed(DiskPeripheral_t* dp, const void* data, size_t size)
     -> PeripheralStatus_t {
-  if (dp == nullptr || data == nullptr || size < sizeof(uint8_t)) {
+  if (dp == nullptr || data == nullptr || size != sizeof(uint8_t)) {
     return peripheral_error;
   }
   dp->is_speed_enhanced = (*static_cast<const uint8_t*>(data) != 0);
