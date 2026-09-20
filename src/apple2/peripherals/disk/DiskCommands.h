@@ -10,6 +10,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "apple2/peripherals/Peripheral_Subsystems.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -65,22 +67,22 @@ typedef enum {
 } DiskStatus_e;
 
 typedef enum {
-  disk_cmd_insert = 0x0001,
-  disk_cmd_eject = 0x0002,
-  disk_cmd_swap_drives = 0x0003,
-  disk_cmd_set_protect = 0x0004,
-  disk_cmd_boot = 0x0006,
-  disk_driver_cmd_set_enhanced_speed = 0x1001,
+  disk_cmd_insert = PERIPHERAL_SUBSYSTEM_DISK | 0x0001,
+  disk_cmd_eject = PERIPHERAL_SUBSYSTEM_DISK | 0x0002,
+  disk_cmd_swap_drives = PERIPHERAL_SUBSYSTEM_DISK | 0x0003,
+  disk_cmd_set_protect = PERIPHERAL_SUBSYSTEM_DISK | 0x0004,
+  disk_cmd_boot = PERIPHERAL_SUBSYSTEM_DISK | 0x0006,
+  disk_driver_cmd_set_enhanced_speed = PERIPHERAL_SUBSYSTEM_DISK | 0x1001,
   // Backward-compatibility aliases
-  disk_cmd_get_status = 0x0005,
-  disk_cmd_get_supported_extensions = 0x0007
+  disk_cmd_get_status = PERIPHERAL_SUBSYSTEM_DISK | 0x0005,
+  disk_cmd_get_supported_extensions = PERIPHERAL_SUBSYSTEM_DISK | 0x0007
 } DiskCmd_t;
 
 typedef DiskCmd_t DiskCmd_e;
 
 typedef enum {
-  disk_query_status = 0x0001,
-  disk_query_supported_extensions = 0x0002
+  disk_query_status = PERIPHERAL_SUBSYSTEM_DISK | 0x0001,
+  disk_query_supported_extensions = PERIPHERAL_SUBSYSTEM_DISK | 0x0002
 } DiskQuery_t;
 
 typedef struct {

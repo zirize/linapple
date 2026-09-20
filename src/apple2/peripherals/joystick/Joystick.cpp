@@ -6,9 +6,10 @@
 #include <cstring>
 #include <memory>
 
-#include "apple2/peripherals/joystick/JoystickCommands.h"
 #include "apple2/peripherals/Peripheral.h"
+#include "apple2/peripherals/Peripheral_Subsystems.h"
 #include "apple2/peripherals/Peripheral_Types.h"
+#include "apple2/peripherals/joystick/JoystickCommands.h"
 
 auto mem_read_floating_bus(uint32_t executed_cycles) -> uint8_t;
 
@@ -226,6 +227,14 @@ static auto joystick_abi_command(void* instance, uint32_t cmd, const void* data,
   }
   auto* joystick_peripheral = static_cast<JoystickPeripheral_t*>(instance);
 
+  // Slot 0 offers an id to every peripheral in it, so an id whose high half
+  // names another subsystem is not ours. peripheral_incompatible, never
+  // peripheral_error: an error stops peripheral_query()'s search before it
+  // reaches the peripheral that does own the id.
+  if (peripheral_cmd_is_mine(cmd, PERIPHERAL_SUBSYSTEM_JOYSTICK) == 0) {
+    return peripheral_incompatible;
+  }
+
   switch (cmd) {
     case JOY_CMD_SET_AXIS: {
       if (data == nullptr || size < sizeof(JoystickAxisPayload_t)) {
@@ -291,6 +300,14 @@ static auto joystick_abi_query(void* instance, uint32_t cmd, void* out,
                                size_t* size) -> PeripheralStatus_t {
   if (size == nullptr) {
     return peripheral_error;
+  }
+
+  // Slot 0 offers an id to every peripheral in it, so an id whose high half
+  // names another subsystem is not ours. peripheral_incompatible, never
+  // peripheral_error: an error stops peripheral_query()'s search before it
+  // reaches the peripheral that does own the id.
+  if (peripheral_cmd_is_mine(cmd, PERIPHERAL_SUBSYSTEM_JOYSTICK) == 0) {
+    return peripheral_incompatible;
   }
 
   switch (cmd) {
