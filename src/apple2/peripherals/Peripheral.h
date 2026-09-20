@@ -125,6 +125,19 @@ PeripheralStatus_t peripheral_command(int slot, uint32_t cmd_id,
                                       const void* data, size_t size);
 PeripheralStatus_t peripheral_query(int slot, uint32_t cmd_id, void* out,
                                     size_t* out_size);
+/* Slot 0 holds several peripherals at once, and slots 1 to 7 can hold two
+ * cards of the same kind in different slots, so a caller that means one
+ * peripheral says which by the id in its descriptor ("linapple.keyboard").
+ * Both keep the slot, so a command for one Super Serial card does not reach
+ * the other. peripheral_command_by_id() queues like peripheral_command()
+ * does, and returns peripheral_error only for a request it can reject before
+ * queuing: a slot that holds no such peripheral, or an oversized payload. */
+PeripheralStatus_t peripheral_command_by_id(int slot, const char* peripheral_id,
+                                            uint32_t cmd_id, const void* data,
+                                            size_t size);
+PeripheralStatus_t peripheral_query_by_id(int slot, const char* peripheral_id,
+                                          uint32_t cmd_id, void* out,
+                                          size_t* out_size);
 void peripheral_save_state(int slot, void* buffer, size_t* size);
 void peripheral_load_state(int slot, const void* buffer, size_t size);
 void peripheral_save_state_by_name(int slot, const char* name, void* buffer,
