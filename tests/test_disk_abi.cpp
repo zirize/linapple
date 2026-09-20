@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "apple2/peripherals/Peripheral.h"
+#include "apple2/peripherals/Peripheral_Subsystems.h"
 #include "apple2/peripherals/disk/DiskCommands.h"
 #include "apple2/peripherals/disk/DiskError.h"
 #include "apple2/peripherals/disk/DiskFormatDriver.h"
@@ -51,8 +52,15 @@ TEST_CASE("DiskABI: [DISK-02] DiskInsertCmd_t field offsets are stable") {
 TEST_CASE("DiskABI: [DISK-03] Enum values match ABI specification") {
   CHECK(disk_drive_0 == 0);
   CHECK(disk_drive_1 == 1);
-  CHECK(disk_cmd_insert == 0x01);
-  CHECK(disk_cmd_eject == 0x02);
+  // An id is its subsystem in the high half and its index in the low half, so
+  // that slot 0's occupants cannot be offered each other's commands. The index
+  // is what the ABI specified before the subsystem was added.
+  CHECK((disk_cmd_insert & PERIPHERAL_SUBSYSTEM_MASK) ==
+        PERIPHERAL_SUBSYSTEM_DISK);
+  CHECK((disk_cmd_insert & PERIPHERAL_COMMAND_INDEX_MASK) == 0x01);
+  CHECK((disk_cmd_eject & PERIPHERAL_SUBSYSTEM_MASK) ==
+        PERIPHERAL_SUBSYSTEM_DISK);
+  CHECK((disk_cmd_eject & PERIPHERAL_COMMAND_INDEX_MASK) == 0x02);
   CHECK(disk_state_version == 1);
 }
 
