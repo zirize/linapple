@@ -237,7 +237,7 @@ static auto joystick_abi_command(void* instance, uint32_t cmd, const void* data,
 
   switch (cmd) {
     case JOY_CMD_SET_AXIS: {
-      if (data == nullptr || size < sizeof(JoystickAxisPayload_t)) {
+      if (data == nullptr || size != sizeof(JoystickAxisPayload_t)) {
         return peripheral_error;
       }
       const auto* payload = static_cast<const JoystickAxisPayload_t*>(data);
@@ -252,7 +252,7 @@ static auto joystick_abi_command(void* instance, uint32_t cmd, const void* data,
       return peripheral_ok;
     }
     case JOY_CMD_SET_BUTTON: {
-      if (data == nullptr || size < sizeof(JoystickButtonPayload_t)) {
+      if (data == nullptr || size != sizeof(JoystickButtonPayload_t)) {
         return peripheral_error;
       }
       const auto* payload = static_cast<const JoystickButtonPayload_t*>(data);
@@ -267,7 +267,7 @@ static auto joystick_abi_command(void* instance, uint32_t cmd, const void* data,
       return peripheral_ok;
     }
     case JOY_CMD_SET_TRIM: {
-      if (data == nullptr || size < sizeof(JoystickTrimPayload_t)) {
+      if (data == nullptr || size != sizeof(JoystickTrimPayload_t)) {
         return peripheral_error;
       }
       const auto* payload = static_cast<const JoystickTrimPayload_t*>(data);
@@ -279,11 +279,14 @@ static auto joystick_abi_command(void* instance, uint32_t cmd, const void* data,
       return peripheral_ok;
     }
     case JOY_CMD_RESET: {
+      if (size != 0) {
+        return peripheral_error;  // this command carries no payload
+      }
       joystick_abi_reset(instance);
       return peripheral_ok;
     }
     case JOY_CMD_SET_CONFIG: {
-      if (data == nullptr || size < sizeof(JoystickConfig_t)) {
+      if (data == nullptr || size != sizeof(JoystickConfig_t)) {
         return peripheral_error;
       }
       std::memcpy(&joystick_peripheral->config, data, sizeof(JoystickConfig_t));
